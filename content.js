@@ -4,6 +4,7 @@ let visited = new Set();
 
     
     const run = () => {
+        console.log("ran")
         let student = document.querySelector('.ui-selectmenu-item-header').innerText
         console.log(student)
         console.log(visited)
@@ -17,14 +18,16 @@ let visited = new Set();
             document.querySelector('.rating-tier').click()
             document.querySelector('.save_rubric_button').click()
             document.querySelector(".icon-arrow-right").click();
-
+            run()
         }, 1000)
         
         
     }
-    
-   (function () {
-     setTimeout(run, 3000);
-   })();
 
+    const start = () => {
+        setTimeout(run, 3000);
+
+    }
+    
+start();
 // })
