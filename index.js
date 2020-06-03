@@ -1,4 +1,5 @@
 const puppeteer = require("puppeteer");
+require('dotenv').config();
 
 const visited = new Set();
 
@@ -7,22 +8,34 @@ const markAttendance = async (url) => {
     if(visited.has(id)) return; 
     visited.add(id) 
     
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = await puppeteer.launch({
+      headless: false,
+      slowMo: 250,
+      devtools: true,
+    });
     const page = await browser.newPage();
+    await page.goto("https://canvas.instructure.com/login/canvas");
+    
+    await page.evaluate(() => {
+        // console.log(document.querySelector("#pseudonym_session_unique_id"));
+        //  document.querySelector("#pseudonym_session_unique_id").click()
+        document.querySelector("#pseudonym_session_unique_id").value = process.env.EMAIL;
+        document.querySelector("#pseudonym_session_password").value = process.env.PASSWORD;
+        // document.querySelector("#pseudonym_session_remember_me").click();
+        debugger
+        document.querySelector('input[type="submit"]').click();
+    });
+    
+     page = await browser.newPage();
     await page.goto(url);
     
-  // Get the "viewport" of the page, as reported by the page.
-  const dimensions = await page.evaluate(() => {
    const [button] = await page.$x("//button[contains(., 'View Rubric')]");
-    if (button) {
-        await button.click();
-    }
-   const [span] = await page.$x("//span[contains(., '3 pts')]");
-    if (span) {
-        await span.click();
-    }
+    if (button) { await button.click() }
+   
+    const [span] = await page.$x("//span[contains(., '3 pts')]");
+    if (span) { await span.click();}
 
-    await browser.close();
+    // await browser.close();
     }
 
 markAttendance(
